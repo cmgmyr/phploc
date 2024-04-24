@@ -65,20 +65,17 @@ use function trim;
 
 final class Analyser
 {
-    /**
-     * @var Collector
-     */
-    private $collector;
+    private Collector $collector;
 
     /**
-     * @var array
+     * @var array<string, string|null>
      */
-    private $classes = [];
+    private array $classes = [];
 
     /**
-     * @var array
+     * @var array<string, bool>
      */
-    private $superGlobals = [
+    private array $superGlobals = [
         '$_ENV'             => true,
         '$_POST'            => true,
         '$_GET'             => true,
@@ -96,10 +93,14 @@ final class Analyser
 
     public function __construct()
     {
-        $this->collector = new Collector;
+        $this->collector = new Collector();
     }
 
-    public function countFiles(array $files, bool $countTests)
+    /**
+     * @param array<int, string> $files
+     * @return array<string, int|float>
+     */
+    public function countFiles(array $files, bool $countTests): array
     {
         foreach ($files as $file) {
             $this->countFile($file, $countTests);
@@ -110,7 +111,15 @@ final class Analyser
 
     public function preProcessFile(string $filename): void
     {
-        $tokens    = token_get_all(file_get_contents($filename));
+        $fileContent = file_get_contents($filename);
+        
+        if ($fileContent === false) {
+            return;
+        }
+
+        /** @var array<int, string|array<int, mixed>> $tokens */
+        $tokens = token_get_all($fileContent);
+
         $numTokens = count($tokens);
         $namespace = false;
 
@@ -148,17 +157,19 @@ final class Analyser
 
     /**
      * Processes a single file.
-     *
-     * @param string $filename
-     * @param bool   $countTests
      */
-    public function countFile($filename, $countTests): void
+    public function countFile(string $filename, bool $countTests): void
     {
         if ($countTests) {
             $this->preProcessFile($filename);
         }
 
         $buffer = file_get_contents($filename);
+        
+        if ($buffer === false) {
+            return;
+        }
+        
         $this->collector->incrementLines(substr_count($buffer, "\n"));
         $tokens    = token_get_all($buffer);
         $numTokens = count($tokens);
@@ -243,7 +254,9 @@ final class Analyser
             switch ($token) {
                 case T_NAMESPACE:
                     $namespace = $this->getNamespaceName($tokens, $i);
-                    $this->collector->addNamespace($namespace);
+                    if ($namespace !== false) {
+                        $this->collector->addNamespace($namespace);
+                    }
                     $isLogicalLine = false;
 
                     break;
@@ -299,7 +312,7 @@ final class Analyser
 
                     $next = $this->getNextNonWhitespaceTokenPos($tokens, $i);
 
-                    if ($tokens[$next] === '&' || (is_array($tokens[$next]) && $tokens[$next][1] === '&')) {
+                    if ($next !== false && ($tokens[$next] === '&' || (is_array($tokens[$next]) && $tokens[$next][1] === '&'))) {
                         $next = $this->getNextNonWhitespaceTokenPos($tokens, $next);
                     }
 
@@ -331,6 +344,7 @@ final class Analyser
                                     continue;
                                 }
 
+                                /** @phpstan-ignore-next-line */
                                 if (isset($tokens[$j][0])) {
                                     switch ($tokens[$j][0]) {
                                         case T_PRIVATE:
@@ -459,7 +473,7 @@ final class Analyser
                 case T_DOUBLE_COLON:
                 case T_OBJECT_OPERATOR:
                     $n  = $this->getNextNonWhitespaceTokenPos($tokens, $i);
-                    $nn = $this->getNextNonWhitespaceTokenPos($tokens, $n);
+                    $nn = $n !== false ? $this->getNextNonWhitespaceTokenPos($tokens, $n) : false;
 
                     if ($n && $nn &&
                         isset($tokens[$n][0]) &&
@@ -506,11 +520,10 @@ final class Analyser
     }
 
     /**
-     * @param int $i
-     *
-     * @return string
+     * @param array<int, string|array<int, mixed>> $tokens
+     * @return string|false
      */
-    private function getNamespaceName(array $tokens, $i)
+    private function getNamespaceName(array $tokens, int $i)
     {
         if (isset($tokens[$i + 2][1])) {
             $namespace = $tokens[$i + 2][1];
@@ -530,12 +543,9 @@ final class Analyser
     }
 
     /**
-     * @param string $namespace
-     * @param int    $i
-     *
-     * @return string
+     * @param array<int, string|array<int, mixed>> $tokens
      */
-    private function getClassName($namespace, array $tokens, $i)
+    private function getClassName(string|false $namespace, array $tokens, int $i): string
     {
         $i += 2;
 
@@ -558,12 +568,7 @@ final class Analyser
         return strtolower($className);
     }
 
-    /**
-     * @param string $className
-     *
-     * @return bool
-     */
-    private function isTestClass($className)
+    private function isTestClass(string $className): bool
     {
         $parent = $this->classes[$className];
         $count  = 0;
@@ -596,24 +601,19 @@ final class Analyser
 
         // Fallback: Treat the class as a test case class if the name
         // of the parent class ends with "TestCase".
-        return substr((string) $this->classes[$className], -8) === 'testcase';
+        return str_ends_with((string) $this->classes[$className], 'testcase');
     }
 
     /**
-     * @param string $functionName
-     * @param int    $visibility
-     * @param bool   $static
-     * @param int    $currentToken
-     *
-     * @return bool
+     * @param array<int, string|array<int, mixed>> $tokens
      */
-    private function isTestMethod($functionName, $visibility, $static, array $tokens, $currentToken)
+    private function isTestMethod(string $functionName, int $visibility, bool $static, array $tokens, int $currentToken): bool
     {
         if ($static || $visibility != T_PUBLIC) {
             return false;
         }
 
-        if (strpos($functionName, 'test') === 0) {
+        if (str_starts_with($functionName, 'test')) {
             return true;
         }
 
@@ -625,16 +625,15 @@ final class Analyser
             $currentToken--;
         }
 
-        return strpos($tokens[$currentToken][1], '@test') !== false ||
-               strpos($tokens[$currentToken][1], '@scenario') !== false;
+        return str_contains($tokens[$currentToken][1], '@test') ||
+               str_contains($tokens[$currentToken][1], '@scenario');
     }
 
     /**
-     * @param int $start
-     *
-     * @return bool
+     * @param array<int, string|array<int, mixed>> $tokens
+     * @return int|false
      */
-    private function getNextNonWhitespaceTokenPos(array $tokens, $start)
+    private function getNextNonWhitespaceTokenPos(array $tokens, int $start)
     {
         if (isset($tokens[$start + 1])) {
             if (isset($tokens[$start + 1][0]) &&
@@ -650,11 +649,10 @@ final class Analyser
     }
 
     /**
-     * @param int $start
-     *
-     * @return bool
+     * @param array<int, string|array<int, mixed>> $tokens
+     * @return int|false
      */
-    private function getPreviousNonWhitespaceTokenPos(array $tokens, $start)
+    private function getPreviousNonWhitespaceTokenPos(array $tokens, int $start)
     {
         if (isset($tokens[$start - 1])) {
             if (isset($tokens[$start - 1][0]) &&
@@ -670,7 +668,8 @@ final class Analyser
     }
 
     /**
-     * @return bool
+     * @param array<int, string|array<int, mixed>> $tokens
+     * @return int|false
      */
     private function getPreviousNonWhitespaceNonCommentTokenPos(array $tokens, int $start)
     {
@@ -693,11 +692,9 @@ final class Analyser
     }
 
     /**
-     * @param int $i
-     *
-     * @return bool
+     * @param array<int, string|array<int, mixed>> $tokens
      */
-    private function isClassDeclaration(array $tokens, $i)
+    private function isClassDeclaration(array $tokens, int $i): bool
     {
         $n = $this->getPreviousNonWhitespaceTokenPos($tokens, $i);
 

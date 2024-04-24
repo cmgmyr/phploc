@@ -18,9 +18,6 @@ use function trim;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Cmgmyr\PHPLOC\Log\Csv
- */
 final class CsvTest extends TestCase
 {
     /**

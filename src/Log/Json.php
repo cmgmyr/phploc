@@ -16,6 +16,9 @@ use function json_encode;
 
 final class Json
 {
+    /**
+     * @param array<string, int|float> $count
+     */
     public function printResult(string $filename, array $count): void
     {
         $directories = [];

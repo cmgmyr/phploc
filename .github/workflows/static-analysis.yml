@@ -1,4 +1,4 @@
-name: Type Checker
+name: Static Analysis
 
 on: [push, pull_request]
 
@@ -10,7 +10,7 @@ jobs:
         php-versions: [ '8.1' ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install PHP versions
         uses: shivammathur/setup-php@v2
         with:
@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: actions-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Cache PHP dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: vendor-cache
         with:
           path: vendor
@@ -40,5 +40,8 @@ jobs:
         if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Execute Code Static Analysis (PSALM)
-        run: vendor/bin/psalm --config=.psalm/config.xml --no-progress --shepherd --show-info=false --stats
+      - name: Execute PHP Stan
+        run: vendor/bin/phpstan
+        
+      - name: Execute Rector
+        run: vendor/bin/rector --dry-run

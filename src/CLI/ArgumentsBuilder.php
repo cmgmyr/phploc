@@ -15,6 +15,8 @@ use SebastianBergmann\CliParser\Parser as CliParser;
 final class ArgumentsBuilder
 {
     /**
+     * @param array<int, string> $argv
+     * @return Arguments
      * @throws ArgumentsBuilderException
      */
     public function build(array $argv): Arguments
