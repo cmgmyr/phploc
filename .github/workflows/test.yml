@@ -19,13 +19,13 @@ jobs:
         dependency-stability: [ 'prefer-stable' ]
         include:
           -   php: '8.2'
-              phpunit: '^10.0'
+              phpunit: '^11.0'
           -   php: '8.1'
               phpunit: '^10.0'
           -   php: '8.0'
               phpunit: '^10.0'
 
-    name: P${{ matrix.php }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
+    name: PHP ${{ matrix.php }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Update Dependencies with latest stable
         if: matrix.dependency-stability == 'prefer-stable'
