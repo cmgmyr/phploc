@@ -21,7 +21,7 @@
         "php": "^8.0",
         "ext-dom": "*",
         "ext-json": "*",
-        "sebastian/cli-parser": "^2.0|^3.0",
+        "sebastian/cli-parser": "^1.0|^2.0|^3.0",
         "phpunit/php-file-iterator": "^4.0|^5.0"
     },
     "require-dev": {
