@@ -17,7 +17,10 @@ use InvalidArgumentException;
 
 final class Csv
 {
-    private $colmap = [
+    /**
+     * @var array<string, string>
+     */
+    private array $colmap = [
         'directories'                 => 'Directories',
         'files'                       => 'Files',
         'loc'                         => 'Lines of Code (LOC)',
@@ -71,6 +74,9 @@ final class Csv
         'testMethods'                 => 'Test Methods',
     ];
 
+    /**
+     * @param array<string, float|int> $count
+     */
     public function printResult(string $filename, array $count): void
     {
         file_put_contents(
@@ -79,12 +85,17 @@ final class Csv
         );
     }
 
+    /**
+     * @param array<string, float|int> $count
+     */
     private function getKeysLine(array $count): string
     {
         return implode(',', array_values($this->colmap)) . PHP_EOL;
     }
 
     /**
+     * @param array<string, float|int> $count
+     *
      * @throws InvalidArgumentException
      */
     private function getValuesLine(array $count): string

@@ -14,15 +14,23 @@ use function error_reporting;
 use function sprintf;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Cmgmyr\PHPLOC\Analyser
- */
 final class AnalyserTest extends TestCase
 {
-    /**
-     * @var Analyser
-     */
-    private $analyser;
+    private Analyser $analyser;
+
+    public static function issue126Provider()
+    {
+        // issue_126_X.php => CLOC
+        return [
+            [1, 1],
+            [2, 1],
+            [3, 1],
+            [4, 2],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+        ];
+    }
 
     protected function setUp(): void
     {
@@ -244,9 +252,6 @@ final class AnalyserTest extends TestCase
         $this->assertSame(1, $result['traits']);
     }
 
-    /**
-     * @ticket 64
-     */
     public function testIssue64IsFixed(): void
     {
         $result = $this->analyser->countFiles(
@@ -259,9 +264,6 @@ final class AnalyserTest extends TestCase
         $this->assertSame(1, $result['cloc']);
     }
 
-    /**
-     * @ticket 112
-     */
     public function testIssue112IsFixed(): void
     {
         $result = $this->analyser->countFiles(
@@ -275,8 +277,6 @@ final class AnalyserTest extends TestCase
     }
 
     /**
-     * @ticket 126
-     *
      * @dataProvider issue126Provider
      */
     public function testIssue126IsFixed($fileNumber, $cloc): void
@@ -294,25 +294,6 @@ final class AnalyserTest extends TestCase
         $this->assertSame($cloc, $result['cloc'], $assertString);
     }
 
-    public function issue126Provider()
-    {
-        // issue_126_X.php => CLOC
-        return [
-            [1, 1],
-            [2, 1],
-            [3, 1],
-            [4, 2],
-            [5, 3],
-            [6, 3],
-            [7, 3],
-        ];
-    }
-
-    /**
-     * @requires PHP 7
-     *
-     * @ticket 138
-     */
     public function testIssue138IsFixed(): void
     {
         error_reporting(E_ALL);
@@ -327,9 +308,6 @@ final class AnalyserTest extends TestCase
         $this->assertSame(1, $result['classes']);
     }
 
-    /**
-     * @ticket 139
-     */
     public function testIssue139IsFixed(): void
     {
         error_reporting(E_ALL);
@@ -395,7 +373,7 @@ final class AnalyserTest extends TestCase
     public function test_it_provides_average_minimum_and_maximum_number_of_methods_per_class(): void
     {
         $result = $this->analyser->countFiles([__DIR__ . '/../_files/methods_per_class.php'], false);
-        $this->assertSame(2, $result['averageMethodsPerClass']);
+        $this->assertSame(2.0, $result['averageMethodsPerClass']);
         $this->assertSame(0, $result['minimumMethodsPerClass']);
         $this->assertSame(4, $result['maximumMethodsPerClass']);
     }

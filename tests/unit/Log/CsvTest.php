@@ -18,13 +18,10 @@ use function trim;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Cmgmyr\PHPLOC\Log\Csv
- */
 final class CsvTest extends TestCase
 {
     /**
-     * @var \Cmgmyr\PHPLOC\Log\Csv
+     * @var Log\Csv
      */
     private $single;
 
@@ -84,7 +81,7 @@ final class CsvTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->single = new \Cmgmyr\PHPLOC\Log\Csv;
+        $this->single = new Log\Csv;
     }
 
     public function testPrintedResultContainsHeadings(): void

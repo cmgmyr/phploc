@@ -13,35 +13,38 @@ use function dirname;
 
 class Collector
 {
-    private $counts = [];
+    /**
+     * @var array<string, mixed>
+     */
+    private array $counts = [];
 
-    private $currentClassComplexity = 0;
+    private int $currentClassComplexity = 0;
 
-    private $currentClassLines = 0;
+    private int $currentClassLines = 0;
 
-    private $currentMethodComplexity = 0;
+    private int $currentMethodComplexity = 0;
 
-    private $currentMethodLines = 0;
+    private int $currentMethodLines = 0;
 
-    private $currentNumberOfMethods = 0;
+    private int $currentNumberOfMethods = 0;
 
-    public function getPublisher()
+    public function getPublisher(): Publisher
     {
         return new Publisher($this->counts);
     }
 
-    public function addFile($filename): void
+    public function addFile(string $filename): void
     {
         $this->increment('files');
         $this->addUnique('directories', dirname($filename));
     }
 
-    public function incrementLines($number): void
+    public function incrementLines(int $number): void
     {
         $this->increment('lines', $number);
     }
 
-    public function incrementCommentLines($number): void
+    public function incrementCommentLines(int $number): void
     {
         $this->increment('comment lines', $number);
     }
@@ -115,12 +118,12 @@ class Collector
         $this->increment('complexity');
     }
 
-    public function addPossibleConstantAccesses($name): void
+    public function addPossibleConstantAccesses(string $name): void
     {
         $this->addToArray('possible constant accesses', $name);
     }
 
-    public function addConstant($name): void
+    public function addConstant(string $name): void
     {
         $this->addToArray('constant', $name);
     }
@@ -155,7 +158,7 @@ class Collector
         $this->increment('static method calls');
     }
 
-    public function addNamespace($namespace): void
+    public function addNamespace(string $namespace): void
     {
         $this->addUnique('namespaces', $namespace);
     }
@@ -245,25 +248,25 @@ class Collector
         $this->increment('test methods');
     }
 
-    private function addUnique($key, $name): void
+    private function addUnique(string $key, string $name): void
     {
         $this->check($key, []);
         $this->counts[$key][$name] = true;
     }
 
-    private function addToArray($key, $value): void
+    private function addToArray(string $key, int|string $value): void
     {
         $this->check($key, []);
         $this->counts[$key][] = $value;
     }
 
-    private function increment($key, $number = 1): void
+    private function increment(string $key, int $number = 1): void
     {
         $this->check($key, 0);
-        $this->counts[$key] += $number;
+        $this->counts[$key] = (int) $this->counts[$key] + $number;
     }
 
-    private function check($key, $default): void
+    private function check(string $key, mixed $default): void
     {
         if (!isset($this->counts[$key])) {
             $this->counts[$key] = $default;

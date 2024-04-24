@@ -13,6 +13,9 @@ use const PHP_EOL;
 
 final class Text
 {
+    /**
+     * @param array<string, float|int> $count
+     */
     public function printResult(array $count, bool $printTests): void
     {
         if ($count['directories'] > 0) {

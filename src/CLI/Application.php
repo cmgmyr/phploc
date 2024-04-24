@@ -21,6 +21,9 @@ final class Application
 {
     private const VERSION = '8.0.3';
 
+    /**
+     * @param array<int, string> $argv
+     */
     public function run(array $argv): int
     {
         $this->printVersion();
@@ -49,10 +52,10 @@ final class Application
 
         foreach ($arguments->directories() as $directory) {
             $newFiles = (new Facade)->getFilesAsArray(
-                $directory,
-                $arguments->suffixes(),
+                $directory,                         /* @phpstan-ignore-line */
+                $arguments->suffixes(),             /* @phpstan-ignore-line */
                 '',
-                $arguments->exclude()
+                $arguments->exclude()               /* @phpstan-ignore-line */
             );
             $files = $files + $newFiles;
         }
