@@ -75,7 +75,7 @@ final class Csv
     ];
 
     /**
-     * @param array<string, int|float> $count
+     * @param array<string, float|int> $count
      */
     public function printResult(string $filename, array $count): void
     {
@@ -86,7 +86,7 @@ final class Csv
     }
 
     /**
-     * @param array<string, int|float> $count
+     * @param array<string, float|int> $count
      */
     private function getKeysLine(array $count): string
     {
@@ -94,7 +94,8 @@ final class Csv
     }
 
     /**
-     * @param array<string, int|float> $count
+     * @param array<string, float|int> $count
+     *
      * @throws InvalidArgumentException
      */
     private function getValuesLine(array $count): string

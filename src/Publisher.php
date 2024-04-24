@@ -340,7 +340,7 @@ class Publisher
     }
 
     /**
-     * @return array<string, int|float>
+     * @return array<string, float|int>
      */
     public function toArray(): array
     {

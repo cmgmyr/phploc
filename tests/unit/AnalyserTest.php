@@ -18,6 +18,20 @@ final class AnalyserTest extends TestCase
 {
     private Analyser $analyser;
 
+    public static function issue126Provider()
+    {
+        // issue_126_X.php => CLOC
+        return [
+            [1, 1],
+            [2, 1],
+            [3, 1],
+            [4, 2],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+        ];
+    }
+
     protected function setUp(): void
     {
         $this->analyser = new Analyser;
@@ -278,20 +292,6 @@ final class AnalyserTest extends TestCase
         );
 
         $this->assertSame($cloc, $result['cloc'], $assertString);
-    }
-
-    public static function issue126Provider()
-    {
-        // issue_126_X.php => CLOC
-        return [
-            [1, 1],
-            [2, 1],
-            [3, 1],
-            [4, 2],
-            [5, 3],
-            [6, 3],
-            [7, 3],
-        ];
     }
 
     public function testIssue138IsFixed(): void

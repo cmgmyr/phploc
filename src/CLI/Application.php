@@ -52,10 +52,10 @@ final class Application
 
         foreach ($arguments->directories() as $directory) {
             $newFiles = (new Facade)->getFilesAsArray(
-                $directory,                         /** @phpstan-ignore-line */
-                $arguments->suffixes(),             /** @phpstan-ignore-line */
+                $directory,                         /* @phpstan-ignore-line */
+                $arguments->suffixes(),             /* @phpstan-ignore-line */
                 '',
-                $arguments->exclude()               /** @phpstan-ignore-line */
+                $arguments->exclude()               /* @phpstan-ignore-line */
             );
             $files = $files + $newFiles;
         }

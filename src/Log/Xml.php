@@ -15,7 +15,7 @@ use DOMDocument;
 final class Xml
 {
     /**
-     * @param array<string, int|float> $count
+     * @param array<string, float|int> $count
      */
     public function printResult(string $filename, array $count): void
     {
