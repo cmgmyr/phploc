@@ -63,7 +63,7 @@ use function trim;
 
 final class Analyser
 {
-    private Collector $collector;
+    private readonly Collector $collector;
 
     /**
      * @var array<string, null|string>
@@ -566,7 +566,7 @@ final class Analyser
             $className = $namespace . '\\' . $className;
         }
 
-        return strtolower($className);
+        return strtolower((string) $className);
     }
 
     private function isTestClass(string $className): bool
@@ -626,8 +626,8 @@ final class Analyser
             $currentToken--;
         }
 
-        return str_contains($tokens[$currentToken][1], '@test') ||
-               str_contains($tokens[$currentToken][1], '@scenario');
+        return str_contains((string) $tokens[$currentToken][1], '@test') ||
+               str_contains((string) $tokens[$currentToken][1], '@scenario');
     }
 
     /**

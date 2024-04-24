@@ -15,21 +15,21 @@ final class Arguments
         /**
          * @var array<int, string>
          */
-        private array $directories,
+        private readonly array $directories,
         /**
          * @var array<int, string>
          */
-        private array $suffixes,
+        private readonly array $suffixes,
         /**
          * @var array<int, string>
          */
-        private array $exclude,
-        private bool $countTests,
-        private ?string $csvLogfile,
-        private ?string $jsonLogfile,
-        private ?string $xmlLogfile,
-        private bool $help,
-        private bool $version
+        private readonly array $exclude,
+        private readonly bool $countTests,
+        private readonly ?string $csvLogfile,
+        private readonly ?string $jsonLogfile,
+        private readonly ?string $xmlLogfile,
+        private readonly bool $help,
+        private readonly bool $version
     ) {
     }
 
