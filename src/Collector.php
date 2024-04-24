@@ -263,7 +263,7 @@ class Collector
     private function increment(string $key, int $number = 1): void
     {
         $this->check($key, 0);
-        $this->counts[$key] = (int)$this->counts[$key] + $number;
+        $this->counts[$key] = (int) $this->counts[$key] + $number;
     }
 
     private function check(string $key, mixed $default): void

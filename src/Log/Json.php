@@ -17,7 +17,7 @@ use function json_encode;
 final class Json
 {
     /**
-     * @param array<string, int|float> $count
+     * @param array<string, float|int> $count
      */
     public function printResult(string $filename, array $count): void
     {

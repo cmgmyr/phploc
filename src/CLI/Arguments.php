@@ -30,8 +30,7 @@ final class Arguments
         private ?string $xmlLogfile,
         private bool $help,
         private bool $version
-    )
-    {
+    ) {
     }
 
     /**
