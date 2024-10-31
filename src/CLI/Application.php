@@ -19,7 +19,7 @@ use SebastianBergmann\FileIterator\Facade;
 
 final class Application
 {
-    private const VERSION = '8.0.3';
+    private const VERSION = '8.0.4';
 
     public function run(array $argv): int
     {

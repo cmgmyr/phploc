@@ -2,6 +2,12 @@
 
 All notable changes in PHPLOC are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## [8.0.4] - 2024-10-31
+
+### Changed
+
+* Bump dependencies
+
 ## [8.0.3] - 2023-08-05
 
 ### Changed
