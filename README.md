@@ -13,7 +13,7 @@ $ composer global install cmgmyr/phploc
 
 ```
 $ phploc src
-phploc 8.0.4 by Chris Gmyr.
+phploc 8.0.5 by Chris Gmyr.
 
 Directories                                          3
 Files                                               10
