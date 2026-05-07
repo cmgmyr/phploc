@@ -45,17 +45,12 @@ final class Application
             return 0;
         }
 
-        $files = [];
-
-        foreach ($arguments->directories() as $directory) {
-            $newFiles = (new Facade)->getFilesAsArray(
-                $directory,
-                $arguments->suffixes(),
-                '',
-                $arguments->exclude()
-            );
-            $files = $files + $newFiles;
-        }
+        $files = (new Facade)->getFilesAsArray(
+            $arguments->directories(),
+            $arguments->suffixes(),
+            '',
+            $arguments->exclude()
+        );
 
         if (empty($files)) {
             print 'No files found to scan' . PHP_EOL;
